@@ -2,9 +2,10 @@ import { toast } from "sonner";
 
 // Shopify Storefront API Configuration
 const SHOPIFY_API_VERSION = '2025-07';
-const SHOPIFY_STORE_PERMANENT_DOMAIN = 'altor-ropa-deportiva-colombiana-ce359.myshopify.com';
+// Connected via Lovable's Shopify integration (sandbox store)
+const SHOPIFY_STORE_PERMANENT_DOMAIN = 'web-project-hub-rvqbw.myshopify.com';
 const SHOPIFY_STOREFRONT_URL = `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
-const SHOPIFY_STOREFRONT_TOKEN = '3d2a22e043911dc3f8f258c83fee1570';
+const SHOPIFY_STOREFRONT_TOKEN = '845b6417830e895924de49ca5f2d4d3d';
 
 export interface ShopifyProduct {
   node: {
