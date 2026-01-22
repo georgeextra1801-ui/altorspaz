@@ -14,7 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      recolored_product_cache: {
+        Row: {
+          created_at: string
+          id: string
+          product_image_hash: string
+          public_url: string
+          storage_path: string
+          target_color: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_image_hash: string
+          public_url: string
+          storage_path: string
+          target_color: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_image_hash?: string
+          public_url?: string
+          storage_path?: string
+          target_color?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

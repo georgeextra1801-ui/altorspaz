@@ -1,1 +1,10 @@
-project_id = "yyqpgfjddymqwdpvqcck"
+project_id = "ihgotggnwoimlextinvz"
+
+[functions.virtual-tryon]
+verify_jwt = false
+
+[functions.recolor-product]
+verify_jwt = false
+
+[functions.remove-background]
+verify_jwt = false
