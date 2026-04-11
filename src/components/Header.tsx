@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Search, Heart, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -197,7 +197,17 @@ const navLinks: NavItem[] = [
 
 export const Header = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [searchOpen, setSearchOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!searchTerm.trim()) return;
+    setSearchOpen(false);
+    setSearchTerm("");
+    navigate(`/busqueda?q=${encodeURIComponent(searchTerm.trim())}`);
+  };
 
   return (
     <header className="sticky top-0 z-50 bg-background border-b">
@@ -312,16 +322,21 @@ export const Header = () => {
           {/* Actions */}
           <div className="flex items-center gap-2">
             {searchOpen ? (
-              <div className="flex items-center gap-2">
-                <Input 
-                  placeholder="Buscar..." 
+              <form onSubmit={handleSearch} className="flex items-center gap-2">
+                <Input
+                  placeholder="Buscar productos..."
                   className="w-40 md:w-64"
                   autoFocus
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                <Button variant="ghost" size="icon" onClick={() => setSearchOpen(false)}>
+                <Button type="submit" variant="ghost" size="icon">
+                  <Search className="h-5 w-5" />
+                </Button>
+                <Button variant="ghost" size="icon" type="button" onClick={() => { setSearchOpen(false); setSearchTerm(""); }}>
                   <X className="h-5 w-5" />
                 </Button>
-              </div>
+              </form>
             ) : (
               <Button variant="ghost" size="icon" onClick={() => setSearchOpen(true)}>
                 <Search className="h-5 w-5" />

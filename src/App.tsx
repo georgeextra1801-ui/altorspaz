@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import ProductPage from "./pages/ProductPage";
 import VirtualTryOnPage from "./pages/VirtualTryOnPage";
 import { MujeresPage, HombresPage, NinosPage, OfertasPage } from "./pages/CategoryPages";
+import SearchPage from "./pages/SearchPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +26,7 @@ const AppContent = () => {
         <Route path="/hombres" element={<HombresPage />} />
         <Route path="/ninos" element={<NinosPage />} />
         <Route path="/ofertas" element={<OfertasPage />} />
+        <Route path="/busqueda" element={<SearchPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
