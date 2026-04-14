@@ -201,12 +201,27 @@ export const Header = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!searchTerm.trim()) return;
+  const doSearch = (term: string) => {
+    if (!term.trim()) return;
     setSearchOpen(false);
     setSearchTerm("");
-    navigate(`/busqueda?q=${encodeURIComponent(searchTerm.trim())}`);
+    navigate(`/busqueda?q=${encodeURIComponent(term.trim())}`);
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    doSearch(searchTerm);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      doSearch(searchTerm);
+    }
+    if (e.key === "Escape") {
+      setSearchOpen(false);
+      setSearchTerm("");
+    }
   };
 
   return (
@@ -329,6 +344,7 @@ export const Header = () => {
                   autoFocus
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
+                  onKeyDown={handleKeyDown}
                 />
                 <Button type="submit" variant="ghost" size="icon">
                   <Search className="h-5 w-5" />

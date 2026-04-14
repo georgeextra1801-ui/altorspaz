@@ -5,6 +5,7 @@ import { Footer } from "@/components/Footer";
 import { ProductCard } from "@/components/ProductCard";
 import { fetchProducts, ShopifyProduct } from "@/lib/shopify";
 import { Loader2, Search } from "lucide-react";
+import { toast } from "sonner";
 
 const SearchPage = () => {
   const [searchParams] = useSearchParams();
@@ -15,9 +16,12 @@ const SearchPage = () => {
   useEffect(() => {
     if (!term.trim()) return;
     setLoading(true);
-    fetchProducts(24, term)
-      .then(setProducts)
-      .catch(console.error)
+    fetchProducts(24, `title:${term}* OR tag:${term}`)
+      .then((results) => setProducts(results ?? []))
+      .catch((err) => {
+        console.error(err);
+        toast.error("Error al buscar productos", { description: String(err) });
+      })
       .finally(() => setLoading(false));
   }, [term]);
 
