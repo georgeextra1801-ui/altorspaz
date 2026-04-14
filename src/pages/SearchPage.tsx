@@ -15,7 +15,7 @@ const SearchPage = () => {
   useEffect(() => {
     if (!term.trim()) return;
     setLoading(true);
-    fetchProducts(24, `title:*${term}*`)
+    fetchProducts(24, term)
       .then(setProducts)
       .catch(console.error)
       .finally(() => setLoading(false));
