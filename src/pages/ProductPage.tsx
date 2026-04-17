@@ -178,32 +178,61 @@ const ProductPage = () => {
                           const isAvailable = variant?.availableForSale !== false;
                           const colorValue = isColor ? getColorValue(value) : null;
                           
-                          if (isColor && colorValue) {
-                            return (
-                              <Tooltip key={value}>
-                                <TooltipTrigger asChild>
-                                  <button
-                                    onClick={() => variantIndex >= 0 && setSelectedVariantIndex(variantIndex)}
-                                    disabled={!isAvailable}
-                                    className={`w-10 h-10 rounded-full border-2 transition-all ${
-                                      isSelected 
-                                        ? 'ring-2 ring-accent ring-offset-2' 
-                                        : isAvailable
-                                          ? 'hover:ring-2 hover:ring-accent/50 hover:ring-offset-1'
-                                          : 'opacity-50 cursor-not-allowed'
-                                    }`}
-                                    style={{ backgroundColor: colorValue, borderColor: colorValue === '#FFFFFF' ? '#E5E7EB' : colorValue }}
-                                  >
-                                    {!isAvailable && (
-                                      <span className="block w-full h-0.5 bg-destructive rotate-45 transform origin-center" />
-                                    )}
-                                  </button>
-                                </TooltipTrigger>
-                                <TooltipContent side="top">
-                                  {value}
-                                </TooltipContent>
-                              </Tooltip>
-                            );
+                          if (isColor) {
+                            const swatchImage = variant?.image?.url;
+
+                            if (swatchImage) {
+                              return (
+                                <Tooltip key={value}>
+                                  <TooltipTrigger asChild>
+                                    <button
+                                      onClick={() => variantIndex >= 0 && setSelectedVariantIndex(variantIndex)}
+                                      disabled={!isAvailable}
+                                      className={`w-12 h-12 rounded-full overflow-hidden border-2 transition-all bg-white ${
+                                        isSelected
+                                          ? 'ring-2 ring-accent ring-offset-2 border-accent'
+                                          : isAvailable
+                                            ? 'border-border hover:ring-2 hover:ring-accent/50 hover:ring-offset-1'
+                                            : 'opacity-50 cursor-not-allowed border-border'
+                                      }`}
+                                    >
+                                      <img
+                                        src={swatchImage}
+                                        alt={value}
+                                        className="w-full h-full object-cover"
+                                      />
+                                    </button>
+                                  </TooltipTrigger>
+                                  <TooltipContent side="top">{value}</TooltipContent>
+                                </Tooltip>
+                              );
+                            }
+
+                            if (colorValue) {
+                              return (
+                                <Tooltip key={value}>
+                                  <TooltipTrigger asChild>
+                                    <button
+                                      onClick={() => variantIndex >= 0 && setSelectedVariantIndex(variantIndex)}
+                                      disabled={!isAvailable}
+                                      className={`w-10 h-10 rounded-full border-2 transition-all ${
+                                        isSelected 
+                                          ? 'ring-2 ring-accent ring-offset-2' 
+                                          : isAvailable
+                                            ? 'hover:ring-2 hover:ring-accent/50 hover:ring-offset-1'
+                                            : 'opacity-50 cursor-not-allowed'
+                                      }`}
+                                      style={{ backgroundColor: colorValue, borderColor: colorValue === '#FFFFFF' ? '#E5E7EB' : colorValue }}
+                                    >
+                                      {!isAvailable && (
+                                        <span className="block w-full h-0.5 bg-destructive rotate-45 transform origin-center" />
+                                      )}
+                                    </button>
+                                  </TooltipTrigger>
+                                  <TooltipContent side="top">{value}</TooltipContent>
+                                </Tooltip>
+                              );
+                            }
                           }
                           
                           return (
