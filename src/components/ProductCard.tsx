@@ -4,7 +4,8 @@ import { useCartStore } from "@/stores/cartStore";
 import { Button } from "@/components/ui/button";
 import { ShoppingBag, Heart, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { isColorOption, getColorValue } from "@/lib/colors";
+import { isColorOption } from "@/lib/colors";
+import { getSwatchImageForOptionValue } from "@/lib/product-swatches";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface ProductCardProps {
@@ -19,6 +20,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   const image = node.images?.edges?.[0]?.node;
   const price = node.priceRange?.minVariantPrice;
   const firstVariant = node.variants?.edges?.[0]?.node;
+  const colorOption = node.options?.find(opt => isColorOption(opt.name));
 
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -80,22 +82,30 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         </div>
 
         {/* Color options preview */}
-        {node.options?.find(opt => isColorOption(opt.name))?.values && (
+        {colorOption?.values && (
           <div className="absolute bottom-2 left-2 right-2 opacity-100 group-hover:opacity-0 transition-opacity">
             <TooltipProvider>
               <div className="flex gap-1.5 justify-center flex-wrap">
-                {node.options
-                  .find(opt => isColorOption(opt.name))
-                  ?.values.slice(0, 6)
-                  .map((value, idx) => {
-                    const colorValue = getColorValue(value);
-                    return colorValue ? (
+                {colorOption.values.slice(0, 6).map((value, idx) => {
+                    const { imageUrl, altText } = getSwatchImageForOptionValue({
+                      variants: node.variants?.edges || [],
+                      optionName: colorOption.name,
+                      value,
+                      fallbackImageUrl: image?.url,
+                      fallbackAltText: image?.altText || node.title,
+                    });
+
+                    return imageUrl ? (
                       <Tooltip key={idx}>
                         <TooltipTrigger asChild>
-                          <span
-                            className="w-5 h-5 rounded-full border-2 border-white shadow-md cursor-pointer"
-                            style={{ backgroundColor: colorValue }}
-                          />
+                          <span className="w-8 h-8 rounded-full overflow-hidden border-2 border-background shadow-md cursor-pointer bg-background">
+                            <img
+                              src={imageUrl}
+                              alt={altText}
+                              className="w-full h-full object-cover"
+                              loading="lazy"
+                            />
+                          </span>
                         </TooltipTrigger>
                         <TooltipContent side="top" className="text-xs">
                           {value}

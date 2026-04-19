@@ -7,7 +7,8 @@ import { useCartStore } from "@/stores/cartStore";
 import { Button } from "@/components/ui/button";
 import { Loader2, ShoppingBag, Heart, ChevronLeft, Minus, Plus, Camera } from "lucide-react";
 import { toast } from "sonner";
-import { isColorOption, getColorValue } from "@/lib/colors";
+import { isColorOption } from "@/lib/colors";
+import { getSwatchImageForOptionValue, getVariantIndexForOptionValue } from "@/lib/product-swatches";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { VirtualTryOn } from "@/components/VirtualTryOn";
 
@@ -168,27 +169,30 @@ const ProductPage = () => {
                       <label className="font-semibold">{option.name}</label>
                       <div className="flex flex-wrap gap-2">
                         {option.values.map((value) => {
-                          const variantIndex = variants.findIndex(v => 
-                            v.node.selectedOptions?.some(opt => opt.name === option.name && opt.value === value)
-                          );
+                          const variantIndex = getVariantIndexForOptionValue(variants, option.name, value);
                           const isSelected = selectedVariant?.selectedOptions?.some(
                             opt => opt.name === option.name && opt.value === value
                           );
                           const variant = variants[variantIndex]?.node;
                           const isAvailable = variant?.availableForSale !== false;
-                          const colorValue = isColor ? getColorValue(value) : null;
                           
                           if (isColor) {
-                            const swatchImage = variant?.image?.url;
+                            const { imageUrl, altText } = getSwatchImageForOptionValue({
+                              variants,
+                              optionName: option.name,
+                              value,
+                              fallbackImageUrl: mainImage,
+                              fallbackAltText: product.title,
+                            });
 
-                            if (swatchImage) {
+                            if (imageUrl) {
                               return (
                                 <Tooltip key={value}>
                                   <TooltipTrigger asChild>
                                     <button
                                       onClick={() => variantIndex >= 0 && setSelectedVariantIndex(variantIndex)}
                                       disabled={!isAvailable}
-                                      className={`w-12 h-12 rounded-full overflow-hidden border-2 transition-all bg-white ${
+                                      className={`w-12 h-12 rounded-full overflow-hidden border-2 transition-all bg-background ${
                                         isSelected
                                           ? 'ring-2 ring-accent ring-offset-2 border-accent'
                                           : isAvailable
@@ -197,36 +201,11 @@ const ProductPage = () => {
                                       }`}
                                     >
                                       <img
-                                        src={swatchImage}
-                                        alt={value}
+                                        src={imageUrl}
+                                        alt={altText}
                                         className="w-full h-full object-cover"
+                                        loading="lazy"
                                       />
-                                    </button>
-                                  </TooltipTrigger>
-                                  <TooltipContent side="top">{value}</TooltipContent>
-                                </Tooltip>
-                              );
-                            }
-
-                            if (colorValue) {
-                              return (
-                                <Tooltip key={value}>
-                                  <TooltipTrigger asChild>
-                                    <button
-                                      onClick={() => variantIndex >= 0 && setSelectedVariantIndex(variantIndex)}
-                                      disabled={!isAvailable}
-                                      className={`w-10 h-10 rounded-full border-2 transition-all ${
-                                        isSelected 
-                                          ? 'ring-2 ring-accent ring-offset-2' 
-                                          : isAvailable
-                                            ? 'hover:ring-2 hover:ring-accent/50 hover:ring-offset-1'
-                                            : 'opacity-50 cursor-not-allowed'
-                                      }`}
-                                      style={{ backgroundColor: colorValue, borderColor: colorValue === '#FFFFFF' ? '#E5E7EB' : colorValue }}
-                                    >
-                                      {!isAvailable && (
-                                        <span className="block w-full h-0.5 bg-destructive rotate-45 transform origin-center" />
-                                      )}
                                     </button>
                                   </TooltipTrigger>
                                   <TooltipContent side="top">{value}</TooltipContent>
