@@ -1,34 +1,30 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import mujeresImg from "@/assets/category-card-mujeres.jpg";
-import hombresImg from "@/assets/category-card-hombres.jpg";
-import ninosImg from "@/assets/category-card-ninos.jpg";
-import ofertasImg from "@/assets/category-card-ofertas.jpg";
 
 const categories = [
   {
     name: "Mujeres",
     href: "/mujeres",
     description: "Licras, tops y conjuntos",
-    image: mujeresImg,
+    gradient: "from-accent/90 to-spaz-green/70",
   },
   {
     name: "Hombres",
     href: "/hombres",
     description: "Ropa deportiva premium",
-    image: hombresImg,
+    gradient: "from-primary/90 to-spaz-green/60",
   },
   {
     name: "Niños",
     href: "/ninos",
     description: "Moda deportiva infantil",
-    image: ninosImg,
+    gradient: "from-spaz-green/80 to-accent/70",
   },
   {
     name: "Ofertas",
     href: "/ofertas",
     description: "Hasta 50% de descuento",
-    image: ofertasImg,
+    gradient: "from-accent to-spaz-green/80",
   },
 ];
 
@@ -50,15 +46,8 @@ export const CategoriesSection = () => {
               to={category.href}
               className="group relative aspect-[4/5] rounded-xl overflow-hidden"
             >
-              <img
-                src={category.image}
-                alt={category.name}
-                loading="lazy"
-                width={800}
-                height={1024}
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent group-hover:from-black/90 transition-colors duration-300" />
+              <div className={`absolute inset-0 bg-gradient-to-br ${category.gradient}`} />
+              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-300" />
 
               <div className="absolute inset-0 flex flex-col justify-end p-6">
                 <h3 className="font-display text-2xl md:text-3xl text-white mb-1">
