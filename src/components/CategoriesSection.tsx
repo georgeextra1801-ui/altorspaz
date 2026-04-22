@@ -33,9 +33,12 @@ export const CategoriesSection = () => {
     <section className="py-16">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="font-display text-4xl md:text-5xl mb-4">COMPRAR POR CATEGORÍA</h2>
+          <span className="inline-block bg-background px-4 py-1 rounded-full text-xs tracking-widest font-semibold mb-4">
+            PRODUCTOS
+          </span>
+          <h2 className="font-display text-4xl md:text-5xl mb-3">¿QUÉ BUSCAS?</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Encuentra la ropa deportiva perfecta para cada miembro de tu familia
+            Encuentra las prendas deportivas perfectas para cada miembro de tu familia
           </p>
         </div>
 
