@@ -18,6 +18,11 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminBanners from "./pages/admin/AdminBanners";
 import AdminCampaigns from "./pages/admin/AdminCampaigns";
+import AdminBodega from "./pages/admin/AdminBodega";
+import AdminContabilidad from "./pages/admin/AdminContabilidad";
+import AdminPedidos from "./pages/admin/AdminPedidos";
+import AdminEtiquetas from "./pages/admin/AdminEtiquetas";
+import AdminQR from "./pages/admin/AdminQR";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +48,11 @@ const AppContent = () => {
           <Route path="usuarios" element={<AdminUsers />} />
           <Route path="banners" element={<AdminBanners />} />
           <Route path="campanas" element={<AdminCampaigns />} />
+          <Route path="bodega" element={<AdminBodega />} />
+          <Route path="contabilidad" element={<AdminContabilidad />} />
+          <Route path="pedidos" element={<AdminPedidos />} />
+          <Route path="etiquetas" element={<AdminEtiquetas />} />
+          <Route path="qr" element={<AdminQR />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />
