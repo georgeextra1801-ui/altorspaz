@@ -4,22 +4,31 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useCartSync } from "@/hooks/useCartSync";
+import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import ProductPage from "./pages/ProductPage";
 import VirtualTryOnPage from "./pages/VirtualTryOnPage";
 import { MujeresPage, HombresPage, NinosPage, OfertasPage } from "./pages/CategoryPages";
 import SearchPage from "./pages/SearchPage";
 import NotFound from "./pages/NotFound";
+import Auth from "./pages/Auth";
+import CampaignLanding from "./pages/CampaignLanding";
+import AdminLayout from "./components/admin/AdminLayout";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminBanners from "./pages/admin/AdminBanners";
+import AdminCampaigns from "./pages/admin/AdminCampaigns";
 
 const queryClient = new QueryClient();
 
 const AppContent = () => {
   useCartSync();
-  
+
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Index />} />
+        <Route path="/auth" element={<Auth />} />
         <Route path="/producto/:handle" element={<ProductPage />} />
         <Route path="/probador-virtual" element={<VirtualTryOnPage />} />
         <Route path="/mujeres" element={<MujeresPage />} />
@@ -27,6 +36,15 @@ const AppContent = () => {
         <Route path="/ninos" element={<NinosPage />} />
         <Route path="/ofertas" element={<OfertasPage />} />
         <Route path="/busqueda" element={<SearchPage />} />
+        <Route path="/campanas/:slug" element={<CampaignLanding />} />
+
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="usuarios" element={<AdminUsers />} />
+          <Route path="banners" element={<AdminBanners />} />
+          <Route path="campanas" element={<AdminCampaigns />} />
+        </Route>
+
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
@@ -38,7 +56,9 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <AppContent />
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
