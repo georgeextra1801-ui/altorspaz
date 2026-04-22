@@ -12,7 +12,11 @@ export const OffersCarousel = () => {
   useEffect(() => {
     (async () => {
       try {
-        const data = await fetchProducts(20, "tag:carrusel_home");
+        let data = await fetchProducts(20, "tag:carrusel_home");
+        // Fallback: si no hay productos con el tag, mostrar los más recientes
+        if (!data || data.length === 0) {
+          data = await fetchProducts(12);
+        }
         setProducts(data);
       } catch (e) {
         console.error("Error loading offers carousel:", e);
