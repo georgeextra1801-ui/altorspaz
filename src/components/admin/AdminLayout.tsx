@@ -15,18 +15,8 @@ export default function AdminLayout() {
     );
   }
 
-  if (!user) return <Navigate to="/auth" replace />;
-  if (!isAdmin) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 p-4">
-        <h1 className="text-2xl font-display">Sin permisos</h1>
-        <p className="text-muted-foreground text-center">
-          Tu cuenta no tiene rol de administrador.
-        </p>
-        <Link to="/" className="text-primary underline">Volver al inicio</Link>
-      </div>
-    );
-  }
+  if (!user) return <Navigate to="/auth?redirect=/admin" replace />;
+  if (!isAdmin) return <Navigate to="/auth?error=forbidden" replace />;
 
   return (
     <SidebarProvider>
