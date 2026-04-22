@@ -2,160 +2,244 @@ import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
-// Import banner images
+// Fallback images
 import heroBanner1 from "@/assets/hero-banner-paragliding.jpg";
 import heroBanner2 from "@/assets/hero-banner-sports.jpg";
 
-interface BannerSlide {
-  image: string;
+interface HeroSlide {
+  id: string;
   title: string;
   highlight: string;
-  highlightColor: "accent" | "spaz-green";
   subtitle: string;
-  ctaLink: string;
-  ctaText: string;
+  badge_text: string;
+  cta_text: string;
+  cta_link: string;
+  cta2_text: string;
+  cta2_link: string;
+  image_url: string | null;
+  overlay_image_url: string | null;
+  overlay_position_x: number;
+  overlay_position_y: number;
+  overlay_scale: number;
+  overlay_from_color: string;
+  overlay_via_color: string;
+  highlight_color: string;
+  highlight_hex: string;
+  title_color: string;
+  title_font: string;
+  title_size: string;
+  subtitle_color: string;
+  subtitle_font: string;
+  subtitle_size: string;
+  badge_bg_color: string;
+  badge_text_color: string;
+  text_align: string;
+  is_active: boolean;
+  sort_order: number;
 }
 
-const slides: BannerSlide[] = [
+const fallbackSlides: Partial<HeroSlide>[] = [
   {
-    image: heroBanner1,
+    id: "fb1",
     title: "ENTRENA",
     highlight: "CON ESTILO",
-    highlightColor: "accent",
+    highlight_color: "accent",
     subtitle: "Descubre nuestra colección de ropa deportiva diseñada para colombianísimas que buscan rendimiento y estilo.",
-    ctaLink: "/mujeres",
-    ctaText: "Comprar Ahora",
+    cta_link: "/mujeres",
+    cta_text: "Comprar Ahora",
+    cta2_link: "/ofertas",
+    cta2_text: "Ver Ofertas",
+    badge_text: "Nueva Colección 2026",
+    image_url: heroBanner1,
   },
   {
-    image: heroBanner2,
+    id: "fb2",
     title: "VIVE",
     highlight: "LA AVENTURA",
-    highlightColor: "spaz-green",
+    highlight_color: "spaz-green",
     subtitle: "Ropa deportiva de alta calidad para todos tus deportes favoritos. Ciclismo, running, patinaje y más.",
-    ctaLink: "/hombres",
-    ctaText: "Ver Colección",
+    cta_link: "/hombres",
+    cta_text: "Ver Colección",
+    cta2_link: "/ofertas",
+    cta2_text: "Ver Ofertas",
+    badge_text: "Nueva Colección 2026",
+    image_url: heroBanner2,
   },
 ];
 
 export const HeroCarousel = () => {
+  const [slides, setSlides] = useState<HeroSlide[]>([]);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
-  const nextSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase
+        .from("hero_slides")
+        .select("*")
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true });
+      if (data && data.length > 0) {
+        setSlides(data as HeroSlide[]);
+      } else {
+        setSlides(fallbackSlides as HeroSlide[]);
+      }
+    })();
   }, []);
 
+  const nextSlide = useCallback(() => {
+    setCurrentSlide((prev) => (slides.length ? (prev + 1) % slides.length : 0));
+  }, [slides.length]);
+
   const prevSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-  }, []);
+    setCurrentSlide((prev) => (slides.length ? (prev - 1 + slides.length) % slides.length : 0));
+  }, [slides.length]);
 
   const goToSlide = (index: number) => {
     setCurrentSlide(index);
     setIsAutoPlaying(false);
-    // Resume autoplay after 5 seconds of inactivity
     setTimeout(() => setIsAutoPlaying(true), 5000);
   };
 
   useEffect(() => {
-    if (!isAutoPlaying) return;
-    
+    if (!isAutoPlaying || slides.length <= 1) return;
     const interval = setInterval(nextSlide, 5000);
     return () => clearInterval(interval);
-  }, [isAutoPlaying, nextSlide]);
+  }, [isAutoPlaying, nextSlide, slides.length]);
+
+  if (slides.length === 0) {
+    return <section className="relative h-[80vh] min-h-[600px] bg-muted animate-pulse" />;
+  }
 
   const slide = slides[currentSlide];
+  const highlightClass =
+    slide.highlight_color === "spaz-green" ? "text-spaz-green" : "text-accent";
 
   return (
     <section className="relative h-[80vh] min-h-[600px] overflow-hidden">
-      {/* Background images with transition */}
+      {/* Background images */}
       {slides.map((s, index) => (
         <div
-          key={index}
-          className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-1000 ${
+          key={s.id}
+          className={`absolute inset-0 transition-opacity duration-1000 ${
             index === currentSlide ? "opacity-100" : "opacity-0"
           }`}
-          style={{ backgroundImage: `url(${s.image})` }}
-        />
+        >
+          {s.image_url && (
+            <img
+              src={s.image_url}
+              alt={s.title || "Banner"}
+              className="w-full h-full object-cover"
+              loading={index === 0 ? "eager" : "lazy"}
+              fetchPriority={index === 0 ? "high" : "auto"}
+            />
+          )}
+        </div>
       ))}
 
-      {/* Dark overlay for text readability */}
-      <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary/70 to-transparent" />
+      {/* Dark overlay */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: `linear-gradient(to right, ${slide.overlay_from_color || "hsl(0 0% 0% / 0.7)"}, ${slide.overlay_via_color || "hsl(0 0% 0% / 0.4)"}, transparent)`,
+        }}
+      />
 
-      {/* Brand color accents */}
-      <div className="absolute inset-0 opacity-30">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_0%_100%,_hsl(var(--accent))_0%,_transparent_30%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_100%_0%,_hsl(var(--spaz-green))_0%,_transparent_30%)]" />
-      </div>
+      {/* Overlay image (logo) */}
+      {slide.overlay_image_url && (
+        <img
+          src={slide.overlay_image_url}
+          alt="Overlay"
+          className="absolute pointer-events-none object-contain"
+          style={{
+            left: `${slide.overlay_position_x}%`,
+            top: `${slide.overlay_position_y}%`,
+            width: `${slide.overlay_scale}%`,
+            transform: "translate(-50%, -50%)",
+          }}
+        />
+      )}
 
       <div className="container mx-auto px-4 h-full flex items-center relative z-10">
         <div className="max-w-2xl">
-          {/* Content with animation */}
           <div className="text-primary-foreground space-y-6 animate-fade-in" key={currentSlide}>
-            <div className="inline-block bg-accent text-accent-foreground px-4 py-1 text-sm font-medium rounded-full">
-              Nueva Colección 2026
-            </div>
-            <h1 className="font-display text-5xl md:text-7xl lg:text-8xl leading-none">
-              {slide.title}<br />
-              <span className={slide.highlightColor === "accent" ? "text-accent" : "text-spaz-green"}>
-                {slide.highlight}
-              </span>
-            </h1>
-            <p className="text-primary-foreground/90 text-lg max-w-md">
-              {slide.subtitle}
-            </p>
+            {slide.badge_text && (
+              <div className="inline-block bg-accent text-accent-foreground px-4 py-1 text-sm font-medium rounded-full">
+                {slide.badge_text}
+              </div>
+            )}
+            {(slide.title || slide.highlight) && (
+              <h1 className="font-display text-5xl md:text-7xl lg:text-8xl leading-none">
+                {slide.title}
+                {slide.title && slide.highlight && <br />}
+                {slide.highlight && (
+                  <span className={highlightClass}>{slide.highlight}</span>
+                )}
+              </h1>
+            )}
+            {slide.subtitle && (
+              <p className="text-primary-foreground/90 text-lg max-w-md">
+                {slide.subtitle}
+              </p>
+            )}
             <div className="flex flex-wrap gap-4">
-              <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
-                <Link to={slide.ctaLink}>
-                  {slide.ctaText}
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-              <Button asChild size="lg" variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary">
-                <Link to="/ofertas">
-                  Ver Ofertas
-                </Link>
-              </Button>
+              {slide.cta_text && (
+                <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
+                  <Link to={slide.cta_link || "/"}>
+                    {slide.cta_text}
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              )}
+              {slide.cta2_text && (
+                <Button asChild size="lg" variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary">
+                  <Link to={slide.cta2_link || "/ofertas"}>{slide.cta2_text}</Link>
+                </Button>
+              )}
             </div>
           </div>
         </div>
 
-        {/* Navigation arrows */}
-        <div className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 flex flex-col gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={prevSlide}
-            className="bg-primary-foreground/10 hover:bg-primary-foreground/20 text-primary-foreground rounded-full"
-          >
-            <ChevronLeft className="h-6 w-6" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={nextSlide}
-            className="bg-primary-foreground/10 hover:bg-primary-foreground/20 text-primary-foreground rounded-full"
-          >
-            <ChevronRight className="h-6 w-6" />
-          </Button>
-        </div>
+        {slides.length > 1 && (
+          <div className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 flex flex-col gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={prevSlide}
+              className="bg-primary-foreground/10 hover:bg-primary-foreground/20 text-primary-foreground rounded-full"
+            >
+              <ChevronLeft className="h-6 w-6" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={nextSlide}
+              className="bg-primary-foreground/10 hover:bg-primary-foreground/20 text-primary-foreground rounded-full"
+            >
+              <ChevronRight className="h-6 w-6" />
+            </Button>
+          </div>
+        )}
       </div>
 
-      {/* Slide indicators */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-10">
-        {slides.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => goToSlide(index)}
-            className={`w-3 h-3 rounded-full transition-all duration-300 ${
-              index === currentSlide
-                ? "bg-accent w-8"
-                : "bg-primary-foreground/50 hover:bg-primary-foreground/80"
-            }`}
-            aria-label={`Ir a slide ${index + 1}`}
-          />
-        ))}
-      </div>
+      {slides.length > 1 && (
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-10">
+          {slides.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => goToSlide(index)}
+              className={`h-3 rounded-full transition-all duration-300 ${
+                index === currentSlide
+                  ? "bg-accent w-8"
+                  : "bg-primary-foreground/50 hover:bg-primary-foreground/80 w-3"
+              }`}
+              aria-label={`Ir a slide ${index + 1}`}
+            />
+          ))}
+        </div>
+      )}
     </section>
   );
 };
