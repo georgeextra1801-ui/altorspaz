@@ -226,11 +226,6 @@ export const Header = () => {
 
   return (
     <header className="sticky top-0 z-50 bg-background border-b">
-      {/* Top bar - Envío gratis */}
-      <div className="bg-primary text-primary-foreground text-center py-2 text-sm font-medium">
-        ENVÍO GRATIS EN PEDIDOS MAYORES A $200.000 COP
-      </div>
-      
       {/* Main header */}
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
