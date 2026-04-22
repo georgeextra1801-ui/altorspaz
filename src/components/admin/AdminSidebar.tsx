@@ -10,6 +10,10 @@ import {
   ClipboardList,
   Tag,
   QrCode,
+  GalleryHorizontal,
+  Boxes,
+  UserPlus,
+  Tags,
 } from "lucide-react";
 import {
   Sidebar,
@@ -37,9 +41,12 @@ const groups: { label: string; items: { title: string; url: string; icon: any }[
     label: "Tienda",
     items: [
       { title: "Banners Home", url: "/admin/banners", icon: ImageIcon },
+      { title: "Carrusel", url: "/admin/carrusel", icon: GalleryHorizontal },
       { title: "Campañas", url: "/admin/campanas", icon: Megaphone },
+      { title: "Tags", url: "/admin/tags", icon: Tags },
       { title: "Pedidos", url: "/admin/pedidos", icon: ClipboardList },
-      { title: "Etiquetas", url: "/admin/etiquetas", icon: Tag },
+      { title: "Crear cliente", url: "/admin/crear-cliente", icon: UserPlus },
+      { title: "Etiquetas envío", url: "/admin/etiquetas", icon: Tag },
       { title: "QR", url: "/admin/qr", icon: QrCode },
     ],
   },
@@ -47,6 +54,7 @@ const groups: { label: string; items: { title: string; url: string; icon: any }[
     label: "Operación",
     items: [
       { title: "Bodega", url: "/admin/bodega", icon: Package },
+      { title: "Inventario", url: "/admin/inventario", icon: Boxes },
       { title: "Contabilidad", url: "/admin/contabilidad", icon: Calculator },
     ],
   },
