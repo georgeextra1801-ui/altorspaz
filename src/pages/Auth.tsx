@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -12,16 +12,26 @@ import altorLogo from "@/assets/altor-logo.png";
 
 export default function Auth() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user, isAdmin, loading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
+  const redirect = searchParams.get("redirect");
+  const errorParam = searchParams.get("error");
+
+  useEffect(() => {
+    if (errorParam === "forbidden") {
+      toast.error("No tienes permisos de administrador.");
+    }
+  }, [errorParam]);
 
   useEffect(() => {
     if (!loading && user) {
-      navigate(isAdmin ? "/admin" : "/", { replace: true });
+      if (redirect && isAdmin) navigate(redirect, { replace: true });
+      else navigate(isAdmin ? "/admin" : "/", { replace: true });
     }
-  }, [user, isAdmin, loading, navigate]);
+  }, [user, isAdmin, loading, navigate, redirect]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
