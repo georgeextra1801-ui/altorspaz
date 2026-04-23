@@ -36,19 +36,20 @@ export interface ShopifyProduct {
             amount: string;
             currencyCode: string;
           };
-          availableForSale: boolean;
-          selectedOptions: Array<{
-            name: string;
-            value: string;
-          }>;
-          image?: {
-            url: string;
-            altText: string | null;
-          };
-        };
-      }>;
-    };
-    options: Array<{
+           availableForSale: boolean;
+           quantityAvailable: number | null;
+           selectedOptions: Array<{
+             name: string;
+             value: string;
+           }>;
+           image?: {
+             url: string;
+             altText: string | null;
+           };
+         };
+       }>;
+     };
+     options: Array<{
       name: string;
       values: string[];
     }>;
