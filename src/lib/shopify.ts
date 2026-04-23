@@ -121,8 +121,9 @@ const STOREFRONT_QUERY = `
                   amount
                   currencyCode
                 }
-                availableForSale
-                selectedOptions {
+                 availableForSale
+                 quantityAvailable
+                 selectedOptions {
                   name
                   value
                 }
