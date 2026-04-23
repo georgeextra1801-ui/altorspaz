@@ -366,6 +366,35 @@ export const Header = () => {
             <Button variant="ghost" size="icon" className="hidden sm:flex">
               <Heart className="h-5 w-5" />
             </Button>
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" aria-label="Cuenta">
+                    <UserIcon className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56 bg-background">
+                  <DropdownMenuLabel className="truncate">{user.email}</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate("/perfil")}>
+                    <UserIcon className="h-4 w-4 mr-2" /> Mi perfil
+                  </DropdownMenuItem>
+                  {isAdmin && (
+                    <DropdownMenuItem onClick={() => navigate("/admin")}>
+                      <LayoutDashboard className="h-4 w-4 mr-2" /> Panel admin
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={async () => { await signOut(); navigate("/"); }}>
+                    <LogOut className="h-4 w-4 mr-2" /> Cerrar sesión
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button variant="ghost" size="icon" onClick={() => navigate("/auth?redirect=/admin")} aria-label="Iniciar sesión">
+                <UserIcon className="h-5 w-5" />
+              </Button>
+            )}
             <CartDrawer />
           </div>
         </div>
