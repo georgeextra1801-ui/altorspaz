@@ -174,7 +174,11 @@ const ProductPage = () => {
                             opt => opt.name === option.name && opt.value === value
                           );
                           const variant = variants[variantIndex]?.node;
-                          const isAvailable = variant?.availableForSale !== false;
+                          // Disponible si hay stock en CUALQUIER bodega de Shopify (no solo Online Store)
+                          // o si la variante no rastrea inventario (quantityAvailable null) y Shopify la marca disponible
+                          const isAvailable = variant
+                            ? (variant.quantityAvailable ?? 0) > 0 || (variant.quantityAvailable === null && variant.availableForSale)
+                            : true;
                           
                           if (isColor) {
                             const { imageUrl, altText } = getSwatchImageForOptionValue({
