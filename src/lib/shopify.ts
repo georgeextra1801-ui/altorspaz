@@ -174,8 +174,9 @@ const PRODUCT_BY_HANDLE_QUERY = `
               amount
               currencyCode
             }
-            availableForSale
-            selectedOptions {
+             availableForSale
+             quantityAvailable
+             selectedOptions {
               name
               value
             }
