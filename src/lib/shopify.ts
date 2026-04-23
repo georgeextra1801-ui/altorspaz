@@ -36,19 +36,20 @@ export interface ShopifyProduct {
             amount: string;
             currencyCode: string;
           };
-          availableForSale: boolean;
-          selectedOptions: Array<{
-            name: string;
-            value: string;
-          }>;
-          image?: {
-            url: string;
-            altText: string | null;
-          };
-        };
-      }>;
-    };
-    options: Array<{
+           availableForSale: boolean;
+           quantityAvailable: number | null;
+           selectedOptions: Array<{
+             name: string;
+             value: string;
+           }>;
+           image?: {
+             url: string;
+             altText: string | null;
+           };
+         };
+       }>;
+     };
+     options: Array<{
       name: string;
       values: string[];
     }>;
@@ -120,8 +121,9 @@ const STOREFRONT_QUERY = `
                   amount
                   currencyCode
                 }
-                availableForSale
-                selectedOptions {
+                 availableForSale
+                 quantityAvailable
+                 selectedOptions {
                   name
                   value
                 }
@@ -172,8 +174,9 @@ const PRODUCT_BY_HANDLE_QUERY = `
               amount
               currencyCode
             }
-            availableForSale
-            selectedOptions {
+             availableForSale
+             quantityAvailable
+             selectedOptions {
               name
               value
             }
