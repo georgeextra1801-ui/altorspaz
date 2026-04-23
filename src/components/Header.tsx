@@ -1,11 +1,20 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Search, Heart, Menu, X } from "lucide-react";
+import { Search, Heart, Menu, X, User as UserIcon, LogOut, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CartDrawer } from "@/components/CartDrawer";
 import altorLogo from "@/assets/altor-logo.png";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useAuth } from "@/hooks/useAuth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -198,6 +207,7 @@ const navLinks: NavItem[] = [
 export const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { user, isAdmin, signOut } = useAuth();
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -356,6 +366,35 @@ export const Header = () => {
             <Button variant="ghost" size="icon" className="hidden sm:flex">
               <Heart className="h-5 w-5" />
             </Button>
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" aria-label="Cuenta">
+                    <UserIcon className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56 bg-background">
+                  <DropdownMenuLabel className="truncate">{user.email}</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate("/perfil")}>
+                    <UserIcon className="h-4 w-4 mr-2" /> Mi perfil
+                  </DropdownMenuItem>
+                  {isAdmin && (
+                    <DropdownMenuItem onClick={() => navigate("/admin")}>
+                      <LayoutDashboard className="h-4 w-4 mr-2" /> Panel admin
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={async () => { await signOut(); navigate("/"); }}>
+                    <LogOut className="h-4 w-4 mr-2" /> Cerrar sesión
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button variant="ghost" size="icon" onClick={() => navigate("/auth?redirect=/admin")} aria-label="Iniciar sesión">
+                <UserIcon className="h-5 w-5" />
+              </Button>
+            )}
             <CartDrawer />
           </div>
         </div>
